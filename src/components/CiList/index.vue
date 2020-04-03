@@ -1,140 +1,20 @@
 <template>
     <div class="cinema_body">
         <ul>
-            <li>
+            <li v-for="item in cinemaList" :key="item.id">
                 <div>
-                    <span>大地影院(天河店)</span>
+                    <span>{{ item.nm }}</span>
                     <span class="q">
-                        <span class="price">22.9</span>
+                        <span class="price">{{ item.sellPrice }}</span>
                         元起
                     </span>
                 </div>
                 <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
+                    <span>{{ item.addr }}</span>
+                    <span>{{ item.disitance }}</span>
                 </div>
                 <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(天河店)</span>
-                    <span class="q">
-                        <span class="price">22.9</span>
-                        元起
-                    </span>
-                </div>
-                <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(天河店)</span>
-                    <span class="q">
-                        <span class="price">22.9</span>
-                        元起
-                    </span>
-                </div>
-                <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(天河店)</span>
-                    <span class="q">
-                        <span class="price">22.9</span>
-                        元起
-                    </span>
-                </div>
-                <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(天河店)</span>
-                    <span class="q">
-                        <span class="price">22.9</span>
-                        元起
-                    </span>
-                </div>
-                <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(天河店)</span>
-                    <span class="q">
-                        <span class="price">22.9</span>
-                        元起
-                    </span>
-                </div>
-                <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(天河店)</span>
-                    <span class="q">
-                        <span class="price">22.9</span>
-                        元起
-                    </span>
-                </div>
-                <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(天河店)</span>
-                    <span class="q">
-                        <span class="price">22.9</span>
-                        元起
-                    </span>
-                </div>
-                <div class="address">
-                    <span>天河区正佳广场五楼</span>
-                    <span>17km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
+                    <div v-for="(itemCard,key) in item.tag" v-if="itemCard === 1" :key="key" :class="key |classCard">{{ key | formatCard(key) }}</div>
                 </div>
             </li>
         </ul>
@@ -143,7 +23,50 @@
 
 <script>
 export default {
-    name: 'CiList'
+    name: 'CiList',
+    data(){
+        return{
+            cinemaList: []
+        };
+    },
+    mounted(){
+        this.axios.get('/api/cinemaList?cityId=10').then((res)=>{
+            var msg = res.data.msg;
+            if(msg === 'ok'){
+                this.cinemaList = res.data.data.cinemas;
+            }
+        })
+    },
+    filters:{
+        formatCard(key){
+            var card = [
+                { key:'allowRefund', value:'改签' },
+                { key:'endorse', value:'退' },
+                { key:'sell', value:'折扣卡' },
+                { key:'snack', value:'小吃' },
+            ];
+            for(var i=0;i<card.length;i++){
+                if(card[i].key === key){
+                    return card[i].value;
+                }
+            }
+            return '';
+        },
+        classCard(key){
+            var card = [
+                { key:'allowRefund', value:'bl' },
+                { key:'endorse', value:'bl' },
+                { key:'sell', value:'ol' },
+                { key:'snack', value:'ol' },
+            ];
+            for(var i=0;i<card.length;i++){
+                if(card[i].key === key){
+                    return card[i].value;
+                }
+            }
+            return '';
+        }
+    }
 }
 </script>
 
